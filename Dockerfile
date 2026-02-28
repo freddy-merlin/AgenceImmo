@@ -1,7 +1,8 @@
 FROM php:8.2-cli
 
+# Install Node.js + npm
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpq-dev libzip-dev \
+    git curl zip unzip libpq-dev libzip-dev nodejs npm \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -10,7 +11,11 @@ WORKDIR /var/www
 
 COPY . .
 
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
+
+# Install JS dependencies and build assets
+RUN npm install && npm run build
 
 RUN mkdir -p storage/framework/{sessions,views,cache} \
     && mkdir -p storage/logs \
@@ -18,7 +23,6 @@ RUN mkdir -p storage/framework/{sessions,views,cache} \
     && mkdir -p bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
-# cache bust: v2
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 

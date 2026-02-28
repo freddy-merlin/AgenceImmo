@@ -18,7 +18,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Création d'un super admin
-        $superAdmin = User::create([
+        $superAdmin = User::firstOrCreate()([
             'name' => 'Super Admin',
             'email' => 'superadmin@immo.fr',
             'password' => Hash::make('password'),
@@ -27,7 +27,7 @@ class UserSeeder extends Seeder
         $superAdmin->assignRole('super_admin');
 
         // Création d'une agence
-        $agenceUser = User::create([
+        $agenceUser = User::firstOrCreate()([
             'name' => 'Agence Immobilière Test',
             'email' => 'agence@immo.fr',
             'password' => Hash::make('password'),
@@ -36,7 +36,7 @@ class UserSeeder extends Seeder
         $agenceUser->assignRole('agence');
 
         // Création d'un profil pour l'agence (utilisateur)
-        Profil::create([
+        Profil::firstOrCreate()([
             'user_id' => $agenceUser->id,
             'telephone' => '0123456789',
             'adresse' => '123 Rue de l\'Agence',
@@ -49,7 +49,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Création de l'entrée dans la table agences
-        $agence = Agence::create([
+        $agence = Agence::firstOrCreate()([
             'user_id' => $agenceUser->id, // Note: nous avons changé team_id en user_id
             'ifu' => '12345678901234',
             'raison_sociale' => 'Agence Immobilière Test SAS',
@@ -61,7 +61,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Création d'un agent immobilier (appartient à l'agence)
-        $agent = User::create([
+        $agent = User::firstOrCreate()([
             'name' => 'Agent Immobilier',
             'email' => 'agent@immo.fr',
             'password' => Hash::make('password'),
@@ -69,7 +69,7 @@ class UserSeeder extends Seeder
         ]);
         $agent->assignRole('agent');
 
-        Profil::create([
+        Profil::firstOrCreate()([
             'user_id' => $agent->id,
             'telephone' => '0987654321',
             'adresse' => '456 Rue de l\'Agent',
@@ -90,7 +90,7 @@ class UserSeeder extends Seeder
         // Sinon, vous devrez créer une relation many-to-many entre users et agences pour les agents.
 
         // Création d'un propriétaire indépendant
-        $proprietaire = User::create([
+        $proprietaire = User::firstOrCreate()([
             'name' => 'Propriétaire Indépendant',
             'email' => 'proprietaire@immo.fr',
             'password' => Hash::make('password'),
@@ -98,7 +98,7 @@ class UserSeeder extends Seeder
         ]);
         $proprietaire->assignRole('proprietaire');
 
-        Profil::create([
+        Profil::firstOrCreate()([
             'user_id' => $proprietaire->id,
             'telephone' => '0112233445',
             'adresse' => '789 Rue du Propriétaire',
@@ -111,7 +111,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Création d'un locataire
-        $locataire = User::create([
+        $locataire = User::firstOrCreate()([
             'name' => 'Locataire Test',
             'email' => 'locataire@immo.fr',
             'password' => Hash::make('password'),
@@ -119,7 +119,7 @@ class UserSeeder extends Seeder
         ]);
         $locataire->assignRole('locataire');
 
-        Profil::create([
+        Profil::firstOrCreate()([
             'user_id' => $locataire->id,
             'telephone' => '0666778899',
             'adresse' => '321 Rue du Locataire',
@@ -133,7 +133,7 @@ class UserSeeder extends Seeder
         ]);
 
         // Création d'un ouvrier
-      /* $ouvrierUser = User::create([
+      /* $ouvrierUser = User::firstOrCreate()([
             'name' => 'Ouvrier Test',
             'email' => 'ouvrier@immo.fr',
             'password' => Hash::make('password'),
@@ -141,7 +141,7 @@ class UserSeeder extends Seeder
         ]);
         $ouvrierUser->assignRole('ouvrier');*/
 
-       /* Profil::create([
+       /* Profil::firstOrCreate()([
             'user_id' => $ouvrierUser->id,
             'telephone' => '0777777777',
             'adresse' => '999 Rue de l\'Ouvrier',
@@ -154,7 +154,7 @@ class UserSeeder extends Seeder
         ]);*/
 
         // Création de l'entrée dans la table ouvriers
-       /* Ouvrier::create([
+       /* Ouvrier::firstOrCreate()([
            // 'user_id' => $ouvrierUser->id,
             'nom' => 'Dupont',
             'prenom' => 'Jean',
