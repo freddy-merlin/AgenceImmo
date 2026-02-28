@@ -17,6 +17,11 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
+# Après composer install
+RUN mkdir -p storage/framework/{sessions,views,cache} \
+    && mkdir -p bootstrap/cache \
+    && chmod -R 775 storage bootstrap/cache
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
