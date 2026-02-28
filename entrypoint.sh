@@ -1,13 +1,15 @@
 #!/bin/sh
 
-echo "=== Permissions..."
+echo "=== START ==="
+echo "APP_KEY present: $([ -n "$APP_KEY" ] && echo YES || echo NO)"
+
 chmod -R 777 storage bootstrap/cache
 
-echo "=== Storage link..."
-php artisan storage:link --force 2>&1
+echo "=== About ==="
+php artisan about 2>&1
 
-echo "=== Migrate..."
+echo "=== Migrate ==="
 php artisan migrate --force 2>&1
 
-echo "=== Starting server..."
+echo "=== Starting server ==="
 exec php -S 0.0.0.0:10000 -t public 2>&1
