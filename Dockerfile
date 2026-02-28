@@ -18,9 +18,9 @@ RUN mkdir -p storage/framework/{sessions,views,cache} \
     && mkdir -p bootstrap/cache \
     && chmod -R 777 storage bootstrap/cache
 
+# cache bust: v2
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 10000
-
 CMD ["/entrypoint.sh"]
