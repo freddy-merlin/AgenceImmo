@@ -1,43 +1,34 @@
-# Image de base PHP (choisis la version que tu utilises)
-FROM php:8.2-fpm
+#!/bin/sh
+set -e  # Arrête le script si une commande échoue
 
-# Installation des dépendances système, extensions PHP, Composer, Node.js
-RUN apt-get update && apt-get install -y \
-    git \
-    curl \
-    libpng-dev \
-    libonig-dev \
-    libxml2-dev \
-    zip \
-    unzip \
-    nodejs \
-    npm \
-    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd \
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+echo "=== START ==="
+echo "APP_KEY present: $([ -n "$APP_KEY" ] && echo YES || echo NO)"
 
-# Définition du répertoire de travail
-WORKDIR /var/www
+# Permissions plus sécurisées
+chmod -R 775 storage bootstrap/cache
 
-# Copie des fichiers de dépendances (pour bénéficier du cache Docker)
-COPY composer.json composer.lock ./
-COPY package.json package-lock.json ./
-
-# Installation des dépendances PHP
-RUN composer install --no-dev --optimize-autoloader
+# Installation des dépendances PHP (déjà fait au build, mais sécurise)
+echo "=== Composer install ==="
+composer install --no-dev --optimize-autoloader 2>&1
 
 # Installation des dépendances Node et build Vite
-RUN npm ci && npm run build
+if [ -f "package.json" ]; then
+    echo "=== Installing Node dependencies ==="
+    npm ci 2>&1  # Installe toutes les dépendances (y compris dev)
+    echo "=== Building Vite assets ==="
+    npm run build 2>&1
+fi
 
-# Copie du reste de l'application
-COPY . .
+echo "=== Storage link ==="
+php artisan storage:link 2>&1
 
-# Permissions
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R 775 storage bootstrap/cache
+echo "=== Cache ==="
+php artisan route:cache 2>&1   # Optionnel en développement
+php artisan view:cache 2>&1
 
-# Copie du script d'entrée
-COPY entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+echo "=== Migrate ==="
+php artisan migrate --force 2>&1
+php artisan db:seed --force 2>&1   # Assure-toi que le seeder est idempotent
 
-EXPOSE 10000
-ENTRYPOINT ["/entrypoint.sh"]
+echo "=== Starting server ==="
+exec php -S 0.0.0.0:10000 -t public 2>&1
