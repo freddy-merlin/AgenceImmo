@@ -8,15 +8,12 @@ use Spatie\Permission\Models\Permission;
 
 class RoleSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         // Reset cached roles and permissions
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Création des permissions (vous pouvez les ajuster selon vos besoins)
+        // Création des permissions (idempotent)
         $permissions = [
             'gestion_utilisateurs',
             'gestion_agences',
@@ -37,14 +34,20 @@ class RoleSeeder extends Seeder
         ];
 
         foreach ($permissions as $permission) {
-            Permission::create(['name' => $permission]);
+            Permission::firstOrCreate(['name' => $permission, 'guard_name' => 'web']);
         }
 
-        // Création des rôles et attribution des permissions
-        $roleSuperAdmin = Role::create(['name' => 'super_admin']);
+        // Création des rôles (idempotent)
+        $roleSuperAdmin = Role::firstOrCreate(['name' => 'super_admin']);
+        $roleAgence     = Role::firstOrCreate(['name' => 'agence']);
+        $roleAgent      = Role::firstOrCreate(['name' => 'agent']);
+        $roleProprietaire = Role::firstOrCreate(['name' => 'proprietaire']);
+        $roleLocataire  = Role::firstOrCreate(['name' => 'locataire']);
+        $roleOuvrier    = Role::firstOrCreate(['name' => 'ouvrier']);
+
+        // Attribution des permissions (sans risque de doublon)
         $roleSuperAdmin->givePermissionTo(Permission::all());
 
-        $roleAgence = Role::create(['name' => 'agence']);
         $roleAgence->givePermissionTo([
             'gestion_biens',
             'gestion_contrats',
@@ -60,7 +63,6 @@ class RoleSeeder extends Seeder
             'modifier_profil',
         ]);
 
-        $roleAgent = Role::create(['name' => 'agent']);
         $roleAgent->givePermissionTo([
             'gestion_biens',
             'gestion_contrats',
@@ -75,7 +77,6 @@ class RoleSeeder extends Seeder
             'modifier_profil',
         ]);
 
-        $roleProprietaire = Role::create(['name' => 'proprietaire']);
         $roleProprietaire->givePermissionTo([
             'gestion_biens',
             'gestion_contrats',
@@ -89,14 +90,12 @@ class RoleSeeder extends Seeder
             'modifier_profil',
         ]);
 
-        $roleLocataire = Role::create(['name' => 'locataire']);
         $roleLocataire->givePermissionTo([
             'signaler_reclamation',
             'payer_loyer',
             'modifier_profil',
         ]);
 
-        $roleOuvrier = Role::create(['name' => 'ouvrier']);
         $roleOuvrier->givePermissionTo([
             'modifier_profil',
         ]);
