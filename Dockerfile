@@ -1,8 +1,10 @@
 FROM php:8.2-cli
 
-# Install Node.js + npm
+# Install Node.js 20 + npm + PHP extensions
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpq-dev libzip-dev nodejs npm \
+    git curl zip unzip libpq-dev libzip-dev \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && docker-php-ext-install pdo pdo_pgsql pgsql zip
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -11,10 +13,10 @@ WORKDIR /var/www
 
 COPY . .
 
-# Install PHP dependencies
+# PHP dependencies
 RUN composer install --no-dev --optimize-autoloader
 
-# Install JS dependencies and build assets
+# JS dependencies + build Vite assets
 RUN npm install && npm run build
 
 RUN mkdir -p storage/framework/{sessions,views,cache} \
