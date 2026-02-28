@@ -10,6 +10,10 @@ php artisan about 2>&1
 
 echo "=== Migrate ==="
 php artisan migrate --force 2>&1
+php artisan db:seed --force 2>&1
+
 
 echo "=== Starting server ==="
 exec php -S 0.0.0.0:10000 -t public 2>&1
+
+ 
