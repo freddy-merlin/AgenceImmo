@@ -11,7 +11,8 @@ php artisan about 2>&1
 echo "=== Migrate ==="
 php artisan migrate --force 2>&1
 php artisan db:seed --force 2>&1
-composer install --force 2>&1
+composer install --no-dev --optimize-autoloader 2>&1
+
 
 
 echo "=== Starting server ==="
