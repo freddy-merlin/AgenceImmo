@@ -1,45 +1,166 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
+<html lang="fr">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+<head>
+    <meta charset="utf-8">
+    <title>@yield('title', 'ArtDecoNavigator - Votre Agence Immobilière')</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="agence immobilière, immobilier, ventes, locations, maisons, appartements, terrains" name="keywords">
+    <meta content="ArtDecoNavigator - Votre partenaire de confiance pour la vente et location de biens immobiliers" name="description">
 
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <!-- Favicon -->
+    <link href="{{ asset('img/favicon.ico') }}" rel="icon">
 
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
 
-        <!-- Styles -->
-        @livewireStyles
-    </head>
-    <body class="font-sans antialiased">
-        <x-banner />
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
-        <div class="min-h-screen bg-gray-100">
-            @livewire('navigation-menu')
+    <!-- Libraries Stylesheet -->
+    <link href="{{ asset('lib/animate/animate.min.css') }}" rel="stylesheet">
+    <link href="{{ asset('lib/owlcarousel/assets/owl.carousel.min.css') }}" rel="stylesheet">
 
-            <!-- Page Heading -->
-            @if (isset($header))
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endif
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="{{ asset('css/bootstrap.min.css') }}" rel="stylesheet">
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
-            </main>
+    <!-- Template Stylesheet -->
+    <link href="{{ asset('css/style.css') }}" rel="stylesheet">
+
+    @stack('styles')
+</head>
+
+<body>
+    <div class="container-fluid bg-white p-0">
+
+        <!-- Spinner Start -->
+        <div id="spinner" class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+            <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+                <span class="sr-only">Chargement...</span>
+            </div>
         </div>
+        <!-- Spinner End -->
 
-        @stack('modals')
+        <!-- Navbar Start -->
+        <div class="container-fluid nav-bar bg-transparent">
+            <nav class="navbar navbar-expand-lg bg-white navbar-light py-0 px-4">
+                <a href="{{ route('home') }}" class="navbar-brand d-flex align-items-center text-center">
+                    <div class="icon p-2 me-2">
+                        <img class="img-fluid" src="{{ asset('img/icon-deal.png') }}" alt="Icon" style="width: 30px; height: 30px;">
+                    </div>
+                    <h1 class="m-0 text-primary">ArtDecoNavigator</h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <div class="navbar-nav ms-auto">
+                        <a href="{{ route('home') }}" class="nav-item nav-link {{ request()->routeIs('home') ? 'active' : '' }}">Accueil</a>
+                        <a href="{{ route('about') }}" class="nav-item nav-link {{ request()->routeIs('about') ? 'active' : '' }}">À propos</a>
+                        <div class="nav-item dropdown">
+                            <a href="#" class="nav-link dropdown-toggle {{ request()->routeIs('property.*') ? 'active' : '' }}" data-bs-toggle="dropdown">Biens</a>
+                            <div class="dropdown-menu rounded-0 m-0">
+                                <a href="{{ route('property.list') }}" class="dropdown-item {{ request()->routeIs('property.list') ? 'active' : '' }}">Liste des biens</a>
+                                <a href="{{ route('property.type') }}" class="dropdown-item {{ request()->routeIs('property.type') ? 'active' : '' }}">Types de biens</a>
+                                <a href="{{ route('property.agent') }}" class="dropdown-item {{ request()->routeIs('property.agent') ? 'active' : '' }}">Nos agents</a>
+                            </div>
+                        </div>
+                        <a href="{{ route('testimonial') }}" class="nav-item nav-link {{ request()->routeIs('testimonial') ? 'active' : '' }}">Témoignages</a>
+                        <a href="{{ route('contact') }}" class="nav-item nav-link {{ request()->routeIs('contact') ? 'active' : '' }}">Contact</a>
+                    </div>
+                    <a href="{{ route('contact') }}" class="btn btn-primary px-3 d-none d-lg-flex">Estimation gratuite</a>
+                </div>
+            </nav>
+        </div>
+        <!-- Navbar End -->
 
-        @livewireScripts
-    </body>
+        <!-- Page Content -->
+        @yield('content')
+        <!-- Page Content End -->
+
+        <!-- Footer Start -->
+        <div class="container-fluid bg-dark text-white-50 footer pt-5 mt-5 wow fadeIn" data-wow-delay="0.1s">
+            <div class="container py-5">
+                <div class="row g-5">
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Contactez-nous</h5>
+                        <p class="mb-2"><i class="fa fa-map-marker-alt me-3"></i>Cotonou</p>
+                        <p class="mb-2"><i class="fa fa-phone-alt me-3"></i>+229 XX XX XX XX XX</p>
+                        <p class="mb-2"><i class="fa fa-envelope me-3"></i>contact@ArtDecoNavigator.fr</p>
+                        <div class="d-flex pt-2">
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-light btn-social" href=""><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Liens rapides</h5>
+                        <a class="btn btn-link text-white-50" href="{{ route('about') }}">À propos</a>
+                        <a class="btn btn-link text-white-50" href="{{ route('contact') }}">Contact</a>
+                        <a class="btn btn-link text-white-50" href="{{ route('property.list') }}">Nos biens</a>
+                        <a class="btn btn-link text-white-50" href="#">Mentions légales</a>
+                        <a class="btn btn-link text-white-50" href="#">Politique de confidentialité</a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Galerie photo</h5>
+                        <div class="row g-2 pt-2">
+                            <div class="col-4"><img class="img-fluid rounded bg-light p-1" src="{{ asset('img/property-1.jpg') }}" alt="Appartement"></div>
+                            <div class="col-4"><img class="img-fluid rounded bg-light p-1" src="{{ asset('img/property-2.jpg') }}" alt="Villa"></div>
+                            <div class="col-4"><img class="img-fluid rounded bg-light p-1" src="{{ asset('img/property-3.jpg') }}" alt="Bureau"></div>
+                            <div class="col-4"><img class="img-fluid rounded bg-light p-1" src="{{ asset('img/property-4.jpg') }}" alt="Terrain"></div>
+                            <div class="col-4"><img class="img-fluid rounded bg-light p-1" src="{{ asset('img/property-5.jpg') }}" alt="Maison"></div>
+                            <div class="col-4"><img class="img-fluid rounded bg-light p-1" src="{{ asset('img/property-6.jpg') }}" alt="Local commercial"></div>
+                        </div>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <h5 class="text-white mb-4">Newsletter</h5>
+                        <p>Inscrivez-vous pour recevoir nos dernières offres et actualités.</p>
+                        <div class="position-relative mx-auto" style="max-width: 400px;">
+                            <input class="form-control bg-transparent w-100 py-3 ps-4 pe-5" type="email" placeholder="Votre email">
+                            <button type="button" class="btn btn-primary py-2 position-absolute top-0 end-0 mt-2 me-2">S'inscrire</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="copyright">
+                    <div class="row">
+                        <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+                            &copy; <a class="border-bottom" href="{{ route('home') }}">ArtDecoNavigator</a>, Tous droits réservés.
+                        </div>
+                        <div class="col-md-6 text-center text-md-end">
+                            <div class="footer-menu">
+                                <a href="{{ route('home') }}">Accueil</a>
+                                <a href="#">FAQ</a>
+                                <a href="#">Aide</a>
+                                <a href="#">Cookies</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Footer End -->
+
+        <!-- Back to Top -->
+        <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ asset('lib/wow/wow.min.js') }}"></script>
+    <script src="{{ asset('lib/easing/easing.min.js') }}"></script>
+    <script src="{{ asset('lib/waypoints/waypoints.min.js') }}"></script>
+    <script src="{{ asset('lib/owlcarousel/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
+
+    @stack('scripts')
+</body>
+
 </html>
