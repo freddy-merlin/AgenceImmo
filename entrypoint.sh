@@ -1,8 +1,11 @@
 #!/bin/sh
 
-# Clear & cache config au démarrage
+echo "Clearing config..."
 php artisan config:clear
 php artisan cache:clear
 
-# Start Laravel
+echo "Running migrations..."
+php artisan migrate --force
+
+echo "Starting Laravel..."
 php artisan serve --host=0.0.0.0 --port=10000

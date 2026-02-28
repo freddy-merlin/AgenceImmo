@@ -1,4 +1,4 @@
-FROM php:8.2-fpm
+FROM php:8.2-cli
 
 # Installer dépendances système
 RUN apt-get update && apt-get install -y \
@@ -19,11 +19,9 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader
 
-EXPOSE 10000
-
-CMD php artisan serve --host=0.0.0.0 --port=10000
-
-
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+
+EXPOSE 10000
+
 CMD ["/entrypoint.sh"]
